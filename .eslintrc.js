@@ -4,21 +4,20 @@ module.exports = {
         es2021: true,
         node: true
     },
-    extends: [
-        'plugin:vue/vue3-essential',
-        'airbnb-base',
-        // 'airbnb-typescript/base',
-        'plugin:prettier/recommended'
-    ],
-    // settings: { 'import/resolver': { typescript: {} } },
+    extends: ['plugin:vue/vue3-essential', 'airbnb-base', 'plugin:prettier/recommended'],
     settings: {
+        // 解决vite+airbnb导致eslint报错import/extensions
         'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
         'import/parsers': {
             '@typescript-eslint/parser': ['.ts', '.tsx']
         },
+        // 解决vite+airbnb导致eslint报错import/no-unresolved，和使用别名报错
         'import/resolver': {
             node: {
                 extensions: ['.js', '.jsx', '.ts', '.tsx']
+            },
+            alias: {
+                map: [['@', './src']]
             }
         }
     },
@@ -26,8 +25,6 @@ module.exports = {
         ecmaVersion: 12,
         parser: '@typescript-eslint/parser',
         sourceType: 'module'
-        // project: './tsconfig.json'
-        // extraFileExtensions: ['.vue']
     },
     plugins: ['vue', '@typescript-eslint'],
     rules: {
@@ -35,6 +32,7 @@ module.exports = {
         'vue/multi-word-component-names': 0,
         // vue3可以有多个根组件
         'vue/no-multiple-template-root': 0,
+        // 解决vite+airbnb导致eslint报错import/extensions
         'import/extensions': [
             'error',
             'ignorePackages',
@@ -44,6 +42,7 @@ module.exports = {
                 ts: 'never',
                 tsx: 'never'
             }
-        ]
+        ],
+        'import/no-extraneous-dependencies': ['error', { devDependencies: ['vite.config.ts'] }]
     }
 }
