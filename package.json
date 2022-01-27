@@ -3,13 +3,16 @@
     "version": "0.0.0",
     "scripts": {
         "dev": "vite",
-        "build": "vue-tsc --noEmit && vite build",
-        "preview": "vite preview"
+        "build": "vue-tsc --noEmit --skipLibCheck && vite build",
+        "build:staging": "vite build --mode staging",
+        "preview": "vite preview",
+        "lint:js": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue src",
+        "lint:css": "stylelint src/**/*.{html,vue,css,scss}",
+        "lint": "prettier --write src/**/*.{vue,css,scss,json,js,ts,jsx,tsx} && npm run lint:js && npm run lint:css"
     },
     "dependencies": {
         "axios": "^0.25.0",
         "element-plus": "^1.3.0-beta.9",
-        "eslint": "^8.7.0",
         "vue": "^3.2.25",
         "vue-router": "4",
         "vuex": "^4.0.2"
@@ -19,8 +22,11 @@
         "@typescript-eslint/eslint-plugin": "^5.10.1",
         "@typescript-eslint/parser": "^5.10.1",
         "@vitejs/plugin-vue": "^2.0.0",
+        "eslint": "^8.7.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.3.0",
+        "eslint-import-resolver-alias": "^1.1.2",
+        "eslint-import-resolver-typescript": "^2.5.0",
         "eslint-plugin-import": "^2.25.2",
         "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-vue": "^8.3.0",
@@ -35,6 +41,8 @@
         "stylelint-order": "^5.0.0",
         "typescript": "^4.4.4",
         "vite": "^2.7.2",
+        "vite-plugin-cdn-import": "^0.3.5",
+        "vite-plugin-compression": "^0.4.0",
         "vue-tsc": "^0.29.8"
     }
 }

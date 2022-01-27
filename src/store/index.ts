@@ -11,8 +11,6 @@ keys.forEach((key) => {
     }
 })
 
-console.log(modules)
-
 export default createStore({
     modules
 })

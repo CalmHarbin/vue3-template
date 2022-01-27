@@ -5,6 +5,5 @@ module.exports = {
         'stylelint-config-recommended-vue/scss',
         'stylelint-config-rational-order',
         'stylelint-config-prettier'
-    ],
-    ignoreFiles: ['**/*.js', '**/*.ts', 'dist/*', 'node_modules/*']
+    ]
 }

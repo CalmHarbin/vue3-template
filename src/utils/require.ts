@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import { ElNotification } from 'element-plus'
 
-const baseURL = 'https://api.github.com'
+const baseURL = import.meta.env.VITE_QRQUIRE_URL
 
 const axios = Axios.create({
     baseURL,

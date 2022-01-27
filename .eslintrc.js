@@ -2,22 +2,16 @@ module.exports = {
     env: {
         browser: true,
         es2021: true,
-        node: true
+        node: true,
+        'vue/setup-compiler-macros': true
     },
     extends: ['plugin:vue/vue3-essential', 'airbnb-base', 'plugin:prettier/recommended'],
     settings: {
-        // 解决vite+airbnb导致eslint报错import/extensions
-        'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
-        'import/parsers': {
-            '@typescript-eslint/parser': ['.ts', '.tsx']
-        },
         // 解决vite+airbnb导致eslint报错import/no-unresolved，和使用别名报错
         'import/resolver': {
-            node: {
-                extensions: ['.js', '.jsx', '.ts', '.tsx']
-            },
             alias: {
-                map: [['@', './src']]
+                map: [['@', './src']],
+                extensions: ['.js', '.jsx', '.ts', '.tsx']
             }
         }
     },
