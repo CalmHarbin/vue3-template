@@ -1,34 +1,86 @@
 <template>
     <div class="test-container page-container">
-        <div class="page-title">Unit Test Page</div>
-        <p>count is: {{ count }}</p>
-        <button @click="increment">increment</button>
-
-        <el-button>按钮</el-button>
+        <div class="page-title" v-for="item in list" :key="item.name">
+            {{ item.name }}
+        </div>
     </div>
+
+    <el-button @click="setCount">增加{{ count }}{{ username }}</el-button>
+    <teleport to="#dialog">
+        <Add ref="add"></Add>
+    </teleport>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { useStore } from 'vuex'
+import {
+    ComponentInternalInstance,
+    ComponentPublicInstance,
+    defineComponent,
+    getCurrentInstance,
+    onBeforeMount,
+    onBeforeUnmount,
+    onBeforeUpdate,
+    onMounted,
+    onUnmounted,
+    onUpdated,
+    reactive,
+    ref,
+    watch
+} from 'vue'
+import Add from './mods/Add.vue'
 
 export default defineComponent({
-    name: '',
+    name: 'demo-page',
+    components: { Add },
+    data() {
+        return {}
+    },
     setup() {
-        const count = ref<number>(0)
-        const store = useStore()
-        console.log(store.state)
-        const increment = () => {
+        const { proxy } = getCurrentInstance() as ComponentInternalInstance
+
+        const list = reactive([
+            {
+                name: '张三'
+            },
+            {
+                name: '李四'
+            }
+        ])
+        const count = ref(0)
+        const setCount = () => {
             count.value += 1
         }
-        return { count, increment }
+        console.log('setup')
+        onBeforeMount(() => {
+            console.log('onBeforeMount')
+        })
+        onMounted(() => {
+            proxy.getList()
+            console.log('onMounted')
+        })
+        onBeforeUpdate(() => {
+            console.log('onBeforeUpdate')
+        })
+        onUpdated(() => {
+            console.log('onUpdated', count.value)
+        })
+        onBeforeUnmount(() => {
+            console.log('onBeforeUnmount')
+        })
+        onUnmounted(() => {
+            console.log('onUnmounted')
+        })
+        return { list, count, setCount }
     },
-    created() {
+    mounted() {
         this.getList()
     },
     methods: {
         getList() {
-            console.log(this)
+            console.log(this.$refs.add.a, this.username, this.$store.state.system.title)
+        },
+        setItemRef(el: HTMLElement) {
+            console.log(el, el.innerHTML, this.list)
         }
     }
 })

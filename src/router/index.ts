@@ -4,13 +4,8 @@ import tm from '@/views/test/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/',
-        name: 'user',
-        component: tm
-    },
-    {
-        path: '/aaa',
-        name: 'aaa',
+        path: '/demo',
+        name: 'demo',
         component: tm
     }
 ]

@@ -11,6 +11,9 @@ keys.forEach((key) => {
     }
 })
 
+// 全局的state,暂无
+export interface rootStateType {}
+
 export default createStore({
     modules
 })
