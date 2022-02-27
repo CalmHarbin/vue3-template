@@ -13,10 +13,7 @@
 
 <script lang="ts">
 import {
-    ComponentInternalInstance,
-    ComponentPublicInstance,
     defineComponent,
-    getCurrentInstance,
     onBeforeMount,
     onBeforeUnmount,
     onBeforeUpdate,
@@ -24,9 +21,9 @@ import {
     onUnmounted,
     onUpdated,
     reactive,
-    ref,
-    watch
+    ref
 } from 'vue'
+import { useStore } from 'vuex'
 import Add from './mods/Add.vue'
 
 export default defineComponent({
@@ -36,8 +33,6 @@ export default defineComponent({
         return {}
     },
     setup() {
-        const { proxy } = getCurrentInstance() as ComponentInternalInstance
-
         const list = reactive([
             {
                 name: '张三'
@@ -50,12 +45,17 @@ export default defineComponent({
         const setCount = () => {
             count.value += 1
         }
+        const store = useStore()
+
+        console.log(store.state.system.title)
+
+        console.log(store.state)
+
         console.log('setup')
         onBeforeMount(() => {
             console.log('onBeforeMount')
         })
         onMounted(() => {
-            proxy.getList()
             console.log('onMounted')
         })
         onBeforeUpdate(() => {
@@ -77,7 +77,7 @@ export default defineComponent({
     },
     methods: {
         getList() {
-            console.log(this.$refs.add.a, this.username, this.$store.state.system.title)
+            console.log(this.username, this.$store.state.system.title)
         },
         setItemRef(el: HTMLElement) {
             console.log(el, el.innerHTML, this.list)
