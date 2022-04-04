@@ -3,6 +3,7 @@ import ElementPlus from 'element-plus'
 import router from '@/router/index'
 import App from './App.vue'
 import store from './store'
+import '../mock'
 
 const app = createApp(App)
 

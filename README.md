@@ -1,4 +1,62 @@
-# Vue 3 + Typescript + Vite
+# Vue3 + Typescript + Vite
+
+### 前言
+
+因为每次在开发新项目时，都需要一个开箱即用的基础框架，避免重新开始搭建而浪费时间，遂记录下从零开始搭建一个开箱即用的框架。随着前端的发展，未来版本的更新需要重新搭建框架时也可以作个参考。
+
+实现功能
+
+-   <input type="checkbox" checked>使用 `Vue3` 进行开发</input>
+-   <input type="checkbox" checked>构建工具 使用 `Vite`</input>
+-   <input type="checkbox" checked>使用 `vue-router`</input>
+-   <input type="checkbox" checked>使用 `Vuex`</input>
+-   <input type="checkbox" checked>集成 `Typescript`</input>
+-   <input type="checkbox" checked>集成 `Scss` 来编写 css</input>
+-   <input type="checkbox" checked>集成 `Eslint` + `Stylelint` + `Prettier` 来规范和格式化代码</input>
+-   <input type="checkbox" checked>环境区分</input>
+-   <input type="checkbox" checked>生产环境使用 cdn、gzip</input>
+-   <input type="checkbox" checked>封装 `axios` 请求</input>
+-   <input type="checkbox" checked>集成 `Mock` 辅助开发</input>
+-   <input type="checkbox" checked>集成 `element-plus`</input>
+
+项目整体目录
+
+```ts
+├── dist/                   // 打包文件的目录
+├── env/                    // 环境配置目录
+|   ├── .env.development    // 开发环境
+|   ├── .env.production     // 生产环境
+├── mock/                   // mock
+|   ├── index.ts
+├── src/
+|   ├── assets/             // 存放图片
+|   ├── components/         // 自定义组件
+|   ├── pages/              // 页面
+|   ├── router/             // 路由
+|   ├── store/
+|   |   ├── index.ts        // store 配置文件
+|   |   ├── index.d.ts      // 声明文件
+|   |   └── modules
+|   |       └── system.ts   // 自己的业务模块，这里写|个示例
+|   ├── styles/             // 样式文件
+|   ├── App.vue
+|   ├── env.d.ts
+|   ├── main.ts
+|   └── shims-vue.d.ts
+├── .eslintignore           // eslint忽略文件
+├── .eslintrc.js            // eslint配置文件
+├── .gitignore              // git忽略文件
+├── .prettierrc             // prettier配置文件
+├── .stylelintignore        // stylelint忽略文件
+├── index.html
+├── package.json
+├── pnpm-lock.yaml
+├── postcss.config.js
+├── README.md
+├── stylelint.config.js     // stylelint配置文件
+├── tsconfig.json
+└── vite.config.ts
+```
 
 ### 生成基本框架
 
@@ -166,7 +224,7 @@ pnpm add vuex@next
 
 `src/store/index.ts`内容如下
 
-```
+```ts
 import { createStore } from 'vuex'
 
 const files = import.meta.globEager('./modules/*.ts')
@@ -183,19 +241,17 @@ keys.forEach((key) => {
 export default createStore({
     modules
 })
-
 ```
 
 `src/store/modules/system.ts`如下
 
-```
+```ts
 export default {
     namespaced: true,
     state: () => ({
         title: 'vue3'
     })
 }
-
 ```
 
 在 `main.ts` 文件中挂载 vuex
@@ -261,7 +317,7 @@ npx eslint --init
     我们这里选择 Use a popular style guide（使用一种流行的风格指南）
 
 -   Which style guide do you want to follow?（你想遵循哪一种风格指南?）
-    <img src="http://file.calmharbin.icu/tos-cn-i-k3u1fbpfcp/596c3755247a45a990d8c847d76fdad1~tplv-k3u1fbpfcp-watermark.png" width="400">
+    <img src="http://file.calmharbin.icu/596c3755247a45a990d8c847d76fdad1_tplv-k3u1fbpfcp-watermark.png" width="400">
     我们这里选择 Airbnb（github 上 star 最高）
 
 -   What format do you want your config file to be in?（你希望你的配置文件是什么格式?）
@@ -274,6 +330,27 @@ npx eslint --init
 
 ```sh
 pnpm add -D eslint-plugin-vue@latest @typescript-eslint/eslint-plugin@latest eslint-config-airbnb-base@latest eslint@^8.2.0 eslint-plugin-import@^2.25.2 @typescript-eslint/parser@latest
+```
+
+修改`.eslintrc.js`文件
+
+```
+// 因为我们使用的是 vue3，所以使用 vue3 的校验规则
+plugin:vue/essential 修改成 plugin:vue/vue3-recommended
+
+// 增加uni的声明
+globals: {
+    /** 避免uni报错 */
+    uni: true,
+    UniApp: true
+},
+```
+
+增加 eslint 忽略文件 `src/.eslintignore`
+
+```
+index.html
+*.d.ts
 ```
 
 ### 安装 stylelint
@@ -343,6 +420,123 @@ rules: {
 extends: [
     'stylelint-config-prettier' // 一定要放在最后一项
 ]
+```
+
+#### 你可能遇到的问题：
+
+##### **eslint 报：使用别名报错 import/no-unresolved**
+
+<img src="http://file.calmharbin.icu/WEBRESOURCE04d1585a4f7961d2c1cf34a531fb9b69.png" width="400">
+
+解决办法：
+
+安装依赖
+
+```
+pnpm add eslint-import-resolver-alias -D
+```
+
+修改 `.eslintrc.js`
+
+```
+settings: {
+    'import/resolver': {
+        alias: {
+            map: [['@', './src']],
+            extensions: ['.js', '.jsx', '.ts', '.tsx']
+        }
+    }
+},
+rules: {
+    // 解决vite+airbnb导致eslint报错import/extensions
+    'import/extensions': [
+        'error',
+        'ignorePackages',
+        {
+            js: 'never',
+            jsx: 'never',
+            ts: 'never',
+            tsx: 'never'
+        }
+    ]
+}
+```
+
+##### **stylelint 报错：Unknown word**
+
+<img src="http://file.calmharbin.icu/WEBRESOURCE31c62db7289cb34d48a11f6a84d8a17c.png" width="400">
+
+解决办法：将报错的文件添加到忽略文件（`.stylelintignore`）即可
+
+##### **vite.config.ts 文件报错**
+
+<img src="http://file.calmharbin.icu/20220227225628.png" width="400">
+
+解决办法：配置 eslint 规则
+
+```ts
+rules: {
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }]
+}
+```
+
+**编译器宏，如 defineProps 和 defineEmits 生成 no-undef 警告**
+
+<img src="http://file.calmharbin.icu/WEBRESOURCEbd009c10b10265b15d30b93b88477b6c.png" width="400">
+
+修改 `.eslintrc.js`
+
+```
+env: {
+    'vue/setup-compiler-macros': true
+}
+```
+
+### 环境区分
+
+实现功能：
+
+-   可以直接区分开发环境和生产环境
+-   自定义环境变量增加 typescript 提示
+
+在根目录下新建 env 文件夹用来存放环境变量配置文件，同时修改 vite 配置（环境变量的根目录）。
+
+> 因为 vite 默认是将项目根目录作为环境变量配置的目录，所以我们需要修改下 vite 的配置指向 env 文件夹
+
+修改 `vite.config.js`
+
+```ts
+export default defineConfig({
+    envDir: resolve(__dirname, 'env')
+})
+```
+
+同时新增 env 文件夹
+
+```ts
+├── env/
+    ├── .env                    // 公共配置
+    ├── .env.development        // 开发环境
+    ├── .env.production         // 生产环境
+    ├── index.d.ts              // 声明文件
+```
+
+需要检查下 `tsconfig.json` 文件是否包含了 `env/index.d.ts`，如果没有需要我们添加一下。
+
+```ts
+"include": ["env/index.d.ts"]
+```
+
+编辑 `src/.env.d.ts` 文件增加自定义变量的声明
+
+```ts
+/** 扩展环境变量import.meta.env */
+interface ImportMetaEnv {
+    /** 标题 */
+    VITE_APP_TITLE: string
+    /** 接口地址 */
+    VITE_REQUEST_BASE_URL: string
+}
 ```
 
 ### 添加 gzip
@@ -426,70 +620,249 @@ export default defineConfig({
 })
 ```
 
-### 常见报错解决办法
+### 封装 axios
 
-**使用别名报错 import/no-unresolved**
+实现功能：
 
-<img src="http://file.calmharbin.icu/WEBRESOURCE04d1585a4f7961d2c1cf34a531fb9b69.png" width="400">
+-   统一配置接口地址
+-   统一设置超时时间/报文格式/报文加密
+-   统一身份认证
+-   统一处理登录超时/接口异常提示
+-   统一返回接口格式
 
-安装
+新建 `src/utils/request/index.ts` 用来存放我们的代码。
 
-```
-pnpm add eslint-import-resolver-alias -D
-```
+```ts
+/**
+ * uni-request请求封装
+ * 1. 统一配置接口地址
+ * 2. 统一设置超时时间/报文格式/报文加密
+ * 3. 统一身份认证
+ * 4. 统一处理登录超时/接口异常提示
+ * 5. 统一返回接口格式
+ */
 
-修改 `.eslintrc.js`
+import Axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
+import { ElNotification } from 'element-plus'
+import Mock from 'mockjs'
 
-```
-settings: {
-    'import/resolver': {
-        alias: {
-            map: [['@', './src']],
-            extensions: ['.js', '.jsx', '.ts', '.tsx']
-        }
+// 接口返回统一格式
+type responseType = {
+    code: number
+    success: boolean
+    msg: string
+    result: any
+}
+
+const axios = Axios.create({
+    timeout: 60000, // 请求超时 60s
+    headers: {
+        'Content-Type': 'application/json;charset=UTF-8'
     }
-},
-rules: {
-    // 解决vite+airbnb导致eslint报错import/extensions
-    'import/extensions': [
-        'error',
-        'ignorePackages',
-        {
-            js: 'never',
-            jsx: 'never',
-            ts: 'never',
-            tsx: 'never'
+})
+
+// 前置拦截器（发起请求之前的拦截）
+axios.interceptors.request.use(
+    (config) => {
+        let url: string
+        if (/^(http|https):\/\/.*/.test(config.url as string)) {
+            // 如果是以http/https开头的则不添加VITE_REQUEST_BASE_URL
+            url = config.url as string
+        } else {
+            url = import.meta.env.VITE_REQUEST_BASE_URL + config.url
         }
-    ]
+
+        // 这里还可以添加token等等
+        // config.headers['Authorization'] = getToken()
+
+        /**
+         * 根据你的项目实际情况来对 config 做处理
+         * 这里对 config 不做任何处理，直接返回
+         */
+        return {
+            ...config,
+            url
+        }
+    },
+    (error) => {
+        return Promise.reject(error)
+    }
+)
+
+// 后置拦截器（获取到响应时的拦截）
+axios.interceptors.response.use(
+    (response: AxiosResponse<responseType, any>) => {
+        /**
+         * 根据你的项目实际情况来对 response 和 error 做处理
+         * 这里对 response 和 error 不做任何处理，直接返回
+         */
+        if (response.data.success) {
+            return response.data
+        }
+
+        // 弹出提示
+        ElNotification.error({
+            title: '提示',
+            message: response.data.msg
+        })
+
+        return Promise.reject(response.data)
+    },
+    (error) => {
+        if (error.response && error.response.data) {
+            const msg = error.response.data.message
+            ElNotification.error({
+                title: '提示',
+                message: msg
+            })
+            // eslint-disable-next-line no-console
+            console.error(`[Axios Error]`, error.response)
+        } else {
+            ElNotification.error({
+                title: '提示',
+                message: error
+            })
+        }
+        return Promise.reject(error)
+    }
+)
+
+export default {
+    /** get请求 */
+    get: (url: string, params?: any, config?: AxiosRequestConfig<any>) =>
+        axios.get<any, responseType, any>(url, { params, ...config }),
+
+    /** post请求 */
+    post: (url: string, data?: any, config?: AxiosRequestConfig<any>) =>
+        axios.post<any, responseType, any>(url, { data, ...config })
 }
 ```
 
-**`vite.config.ts`文件报错**
+使用方式
 
-<img src="http://file.calmharbin.icu/WEBRESOURCE04d1585a4f7961d2c1cf34a531fb9b69.png" width="400">
+```ts
+import request from '@/utils/request'
 
-修改 `.eslintrc.js`
+request
+    .get('/api/getList', {
+        page: 1,
+        size: 20
+    })
+    .then((res) => {
+        console.log(res)
+    })
+```
+
+### 集成 `Mock` 辅助开发
+
+实现功能：
+
+-   统一管理我们想要 mock 的接口
+-   便捷切换是否 mock
+-   自由控制哪些接口 mock，哪些接口真实请求（接口配置了 mock 则为 mock，否则为请求）
+-   对于调用接口的地方是否 mock 是无感知的
+
+比如：
+
+```ts
+import request from '@/utils/request'
+/**
+ * 这样写，既可以是mock数据，也可以是调用接口。
+ */
+request.get('/getUserInfo')
+```
+
+安装 `mock`
+
+```sh
+pnpm add mockjs
+pnpm add -D @types/mockjs
+```
+
+前面我们在环境变量里添加了统一接口地址。我们先制定如下规则：
 
 ```
-rules: {
-    'import/no-extraneous-dependencies': ['error', { devDependencies: ['vite.config.ts'] }]
+# 请求接口地址
+VITE_REQUEST_BASE_URL = /dev # 这样可以直接使用代理请求
+VITE_REQUEST_BASE_URL = /dev/mock # 这样就可以开启mock
+VITE_REQUEST_BASE_URL = https://xxx.com/api # 这样就是直接请求接口
+```
+
+根目录下创建 `mock/index.ts` 文件来存放我们的 Mock 规则。
+
+```ts
+import Mock from 'mockjs'
+
+// 基于我们制定的规则，这里必须做下判断，这个很重要。
+if (/\/mock$/.test(import.meta.env.VITE_REQUEST_BASE_URL)) {
+    // 这里添加 /getUserInfo 这个接口mock数据
+    Mock.mock(`${import.meta.env.VITE_REQUEST_BASE_URL}/getUserInfo`, {
+        code: 200,
+        success: true,
+        msg: '',
+        result: {
+            name: Mock.Random.cname()
+        }
+    })
 }
 ```
 
-**编译器宏，如 defineProps 和 defineEmits 生成 no-undef 警告**
+在 main.js 中引入下。（为什么要引入？不引入代码怎么执行啊）
 
-<img src="http://file.calmharbin.icu/WEBRESOURCEbd009c10b10265b15d30b93b88477b6c.png" width="400">
-
-修改 `.eslintrc.js`
-
+```ts
+import '../mock'
 ```
-env: {
-    'vue/setup-compiler-macros': true
+
+接下来改造我们封装的请求。
+
+修改 `src/utils/request/index.ts`
+
+```ts
+import Mock from 'mockjs'
+
+if (/^(http|https):\/\/.*/.test(config.url)) {
+    // 如果是以http/https开头的则不添加VITE_REQUEST_BASE_URL
+    url = config.url
+    // eslint-disable-next-line no-underscore-dangle
+} else if (Mock._mocked[import.meta.env.VITE_REQUEST_BASE_URL + config.url]) {
+    // 如果是mock数据,Mock._mocked上记录有所有已设置的mock规则。
+    url = import.meta.env.VITE_REQUEST_BASE_URL + config.url
+} else {
+    /**
+     * 开启mock时需要去掉mock路径,不能影响正常接口了。
+     * 如果碰巧你接口是 /api/mock/xxx这种,那VITE_REQUEST_BASE_URL就配置/api/mock/mock吧
+     */
+    url = import.meta.env.VITE_REQUEST_BASE_URL.replace(/\/mock$/, '') + config.url
 }
 ```
 
-**stylelint 报错**
+> 如果 `Mock._mocked` 报 `类型“typeof mockjs”上不存在属性“_mocked”`，需要我们扩展下声明
 
-<img src="http://file.calmharbin.icu/WEBRESOURCE31c62db7289cb34d48a11f6a84d8a17c.png" width="400">
+```ts
+// src/shims-vue.d.ts
 
-编辑 `.stylelintignore` 将其添加到忽略文件即可
+// 扩展mock
+declare module 'mockjs' {
+    /** 所有已注册的mock规则  */
+    const _mocked: Record<string, any>
+}
+```
+
+### 集成 `element-plus`
+
+参考官网：https://element-plus.gitee.io/zh-CN/guide/installation.html
+
+运行效果图
+<img src="http://file.calmharbin.icu/20220404140106.png" width="400" />
+
+### 写在最后
+
+如果你想快速的体验 vue3 开发，你可以拉取我的源码直接开发。
+
+> github: https://github.com/CalmHarbin/vue3-template
+
+创作不易、欢迎 ⭐
+
+我的其他文章：
+
+-   [vite+typescript 创建 uni-app 基础框架，开箱即用](https://juejin.cn/post/7073135372888178702)

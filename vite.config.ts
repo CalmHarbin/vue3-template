@@ -47,6 +47,7 @@ export default defineConfig(({ mode, command }) => {
         ])
     }
     return {
+        envDir: resolve(__dirname, 'env'),
         plugins,
         resolve: {
             alias: {
@@ -82,7 +83,7 @@ export default defineConfig(({ mode, command }) => {
             // 请求代理
             proxy: {
                 '/dev': {
-                    target: 'https://nhgw-test.czdtd.com/edi/nhfd/in',
+                    target: 'https://suggest.taobao.com',
                     changeOrigin: true,
                     // 路径重写，去掉/dev
                     rewrite: (path) => path.replace(/^\/dev/, '')

@@ -1,50 +1,64 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-
-defineProps<{ msg: string }>()
-
-const count = ref(0)
-</script>
-
 <template>
-    <h1>{{ msg }}</h1>
+    <view>hello-world</view>
 
-    <p>
-        Recommended IDE setup:
-        <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
-        +
-        <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-    </p>
+    <view>你当前的城市是: {{ city }}，经纬度：{{ laglnt.lat }}，{{ laglnt.lng }}</view>
 
-    <p>See <code>README.md</code> for more information.</p>
-
-    <p>
-        <a href="https://vitejs.dev/guide/features.html" target="_blank"> Vite Docs </a>
-        |
-        <a href="https://v3.vuejs.org/" target="_blank">Vue 3 Docs</a>
-    </p>
-
-    <button type="button" @click="count++">count is: {{ count }}</button>
-    <p>
-        Edit
-        <code>components/HelloWorld.vue</code> to test hot module replacement.
-    </p>
+    <br />
+    <button @click="getUserInfo">获取mock数据</button>
+    <button @click="apiTest">调用代理接口</button>
 </template>
 
-<style scoped>
-a {
-    color: #42b983;
-}
+<script lang="ts">
+import request from '@/utils/request'
+import { defineComponent, reactive, ref } from 'vue'
+import { useStore } from 'vuex'
 
-label {
-    margin: 0 0.5em;
-    font-weight: bold;
-}
+export default defineComponent({
+    name: 'HelloWorld',
+    setup() {
+        const store = useStore()
+        const city = ref('')
+        const laglnt = reactive({
+            lat: '',
+            lng: ''
+        })
+        const popup = ref()
 
-code {
-    padding: 2px 4px;
-    color: #304455;
-    background-color: #eee;
-    border-radius: 4px;
-}
-</style>
+        console.log('useStore访问store', store.state.system.title)
+
+        // 这个这就接口格式不规范，就用any了
+        request.get('http://ip-api.com/json').then((res: any) => {
+            console.log(res)
+            city.value = res.city
+            laglnt.lat = res.lat
+            laglnt.lng = res.lon
+        })
+
+        const getUserInfo = () => {
+            request.get('/getUserInfo').then((res) => {
+                console.log(res.result)
+            })
+        }
+
+        const apiTest = () => {
+            request
+                .get('/sug', {
+                    code: 'utf-8',
+                    q: '苹果'
+                })
+                .then((res) => {
+                    console.log(res)
+                })
+        }
+
+        const open = () => {
+            popup.value.open()
+        }
+
+        return { city, laglnt, popup, getUserInfo, apiTest, open }
+    },
+    mounted() {
+        console.log('this访问store', this.$store.state.system.title)
+    }
+})
+</script>

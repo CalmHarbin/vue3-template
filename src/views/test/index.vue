@@ -5,25 +5,14 @@
         </div>
     </div>
 
-    <el-button @click="setCount">增加{{ count }}{{ username }}</el-button>
+    <el-button @click="setCount">增加{{ count }}</el-button>
     <teleport to="#dialog">
         <Add ref="add"></Add>
     </teleport>
 </template>
 
 <script lang="ts">
-import {
-    defineComponent,
-    onBeforeMount,
-    onBeforeUnmount,
-    onBeforeUpdate,
-    onMounted,
-    onUnmounted,
-    onUpdated,
-    reactive,
-    ref
-} from 'vue'
-import { useStore } from 'vuex'
+import { defineComponent, reactive, ref } from 'vue'
 import Add from './mods/Add.vue'
 
 export default defineComponent({
@@ -45,31 +34,6 @@ export default defineComponent({
         const setCount = () => {
             count.value += 1
         }
-        const store = useStore()
-
-        console.log(store.state.system.title)
-
-        console.log(store.state)
-
-        console.log('setup')
-        onBeforeMount(() => {
-            console.log('onBeforeMount')
-        })
-        onMounted(() => {
-            console.log('onMounted')
-        })
-        onBeforeUpdate(() => {
-            console.log('onBeforeUpdate')
-        })
-        onUpdated(() => {
-            console.log('onUpdated', count.value)
-        })
-        onBeforeUnmount(() => {
-            console.log('onBeforeUnmount')
-        })
-        onUnmounted(() => {
-            console.log('onUnmounted')
-        })
         return { list, count, setCount }
     },
     mounted() {
@@ -77,7 +41,7 @@ export default defineComponent({
     },
     methods: {
         getList() {
-            console.log(this.username, this.$store.state.system.title)
+            console.log(this.$store.state.system.title)
         },
         setItemRef(el: HTMLElement) {
             console.log(el, el.innerHTML, this.list)
